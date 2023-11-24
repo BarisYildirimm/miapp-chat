@@ -1,4 +1,5 @@
-import { Fragment, useState } from "react";
+import { Fragment, useState, useEffect } from "react";
+import { io } from "socket.io-client";
 import Logo from "../assets/Ellipse.png";
 import { BiLogOutCircle } from "react-icons/bi";
 import { IoIosAddCircleOutline } from "react-icons/io";
@@ -11,6 +12,7 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 
 const HomeScreen = () => {
+  const [socket, setSocket] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [open, setIsOpen] = useState(false);
   const [login] = useState(true);
@@ -18,6 +20,10 @@ const HomeScreen = () => {
   const navigate = useNavigate();
 
   const userInfo = JSON.parse(localStorage.getItem("userInfo"));
+
+  useEffect(() => {
+    setSocket(io("http://localhost:5000"));
+  }, []);
 
   const logoutHandler = () => {
     try {

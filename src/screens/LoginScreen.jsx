@@ -140,15 +140,14 @@ const LoginScreen = () => {
                   {isSignup ? "Sign Up" : "Sign In"}
                 </button>
                 <p className="text-sm font-light text-gray-500 dark:text-gray-400">
-                  <button
+                  <p
                     onClick={switchMode}
-                    href="#"
-                    className="font-medium text-primary-600 hover:underline dark:text-primary-500"
+                    className="font-medium text-primary-600 hover:underline dark:text-primary-500 cursor-pointer"
                   >
                     {isSignup
                       ? "Already have an Account? Sign In"
                       : "Don't have an account? Sign Up"}
-                  </button>
+                  </p>
                 </p>
               </form>
             </div>

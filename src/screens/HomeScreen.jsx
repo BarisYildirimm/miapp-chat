@@ -56,7 +56,7 @@ const HomeScreen = () => {
   return (
     <Fragment>
       <div className="bg-[#EDEDED] w-full min-h-screen flex  text-black ">
-        <div className=" my-7 ml-9 rounded-[10px] border border-solid  p-8 filter shadow-2xl">
+        <div className="w-1/4  my-7 ml-9 rounded-[10px] border border-solid  p-8 filter shadow-2xl">
           <div className="h-6 flex justify-between items-center mb-10">
             <div
               className="relative flex cursor-pointer"

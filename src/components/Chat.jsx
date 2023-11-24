@@ -31,9 +31,9 @@ const Chat = ({ messagesConversations }) => {
           {messagesConversations?.message?.map((message) => (
             <div
               key={message}
-              className={`w-96 rounded-[10px] border border-solid filter shadow-2xl p-5 mb-5 ${
+              className={`w-96 rounded-[10px] border border-solid filter shadow-2xl p-5 mb-5  ${
                 message?.user?.id !== messagesConversations?.receiver?.id &&
-                "ml-auto bg-[#3872e9] text-white"
+                "ml-auto bg-[#3872e9] text-white mr-4"
               }`}
             >
               {message.message}

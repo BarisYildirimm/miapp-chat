@@ -3,7 +3,7 @@ import Logo from "../assets/Ellipse.png";
 const User = (user) => {
   console.log("User", user);
   return (
-    <div className=" flex justify-between items-center pt-12 pr-4">
+    <div className=" flex justify-between items-center pt-12 pr-4 cursor-pointer">
       <div className="flex">
         <img className="h-12" src={Logo} />
         <div className="flex flex-col ml-3">

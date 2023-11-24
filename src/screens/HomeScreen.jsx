@@ -1,5 +1,6 @@
 import { Fragment, useState, useEffect } from "react";
 import { io } from "socket.io-client";
+import axios from "axios";
 import Logo from "../assets/Ellipse.png";
 import { BiLogOutCircle } from "react-icons/bi";
 import { IoIosAddCircleOutline } from "react-icons/io";
@@ -18,12 +19,20 @@ const HomeScreen = () => {
   const [showModal, setShowModal] = useState(false);
   const [open, setIsOpen] = useState(false);
   const [chatOpen, setChatOpen] = useState(true);
-
-  console.log("Chat open", chatOpen);
+  const [chats, setChats] = useState([]);
 
   const navigate = useNavigate();
 
   const userInfo = JSON.parse(localStorage.getItem("userInfo"));
+
+  useEffect(() => {
+    setTimeout(() => {
+      axios.get(`${BASE_URL}/api/conversation/${userInfo._id}`).then((res) => {
+        setChats(res.data);
+      });
+    }, 1000);
+  }, []);
+  console.log(chats);
 
   //   useEffect(() => {
   //     setSocket(io(BASE_URL));
@@ -80,7 +89,7 @@ const HomeScreen = () => {
             className="w-full h-[405px] border overflow-scroll "
             onClick={() => setChatOpen(false)}
           >
-            {users.map((user) => (
+            {chats?.map((user) => (
               <User key={user.id} user={user} />
             ))}
           </div>

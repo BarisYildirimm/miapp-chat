@@ -1,6 +1,7 @@
 import Logo from "../assets/Ellipse.png";
 
-const User = (user) => {
+const User = ({ user }) => {
+  console.log("components", user);
   return (
     <div className=" flex justify-between items-center pt-12 pr-4 cursor-pointer">
       <div className="flex">

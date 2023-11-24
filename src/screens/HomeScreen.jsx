@@ -1,6 +1,6 @@
 import { Fragment, useState, useEffect } from "react";
-import { io } from "socket.io-client";
 import axios from "axios";
+import { io } from "socket.io-client";
 import Logo from "../assets/Ellipse.png";
 import { BiLogOutCircle } from "react-icons/bi";
 import { IoIosAddCircleOutline } from "react-icons/io";
@@ -15,10 +15,11 @@ import { toast } from "react-toastify";
 const BASE_URL = "http://localhost:5000";
 
 const HomeScreen = () => {
-  //   const [socket, setSocket] = useState(null);
+  const [socket, setSocket] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [open, setIsOpen] = useState(false);
   const [chats, setChats] = useState([]);
+  const [users, setUsers] = useState([]);
   const [messagesConversations, setMessagesConverstaions] = useState([]);
 
   const navigate = useNavigate();
@@ -26,12 +27,22 @@ const HomeScreen = () => {
   const userInfo = JSON.parse(localStorage.getItem("userInfo"));
 
   useEffect(() => {
-    setTimeout(() => {
-      axios.get(`${BASE_URL}/api/conversation/${userInfo._id}`).then((res) => {
-        setChats(res.data);
-      });
-    }, 1000);
+    setSocket(io("http://localhost:5000"));
   }, []);
+
+  useEffect(() => {
+    socket?.emit("addUser", userInfo._id);
+    socket?.on("getUsers", (users) => {
+      console.log("activeUsers :>> ", users);
+      setUsers(users);
+    });
+  }, [socket]);
+
+  useEffect(() => {
+    axios.get(`${BASE_URL}/api/conversation/${userInfo._id}`).then((res) => {
+      setChats(res.data);
+    });
+  }, [userInfo._id]);
 
   const handleClickUserMessage = async (conId, user) => {
     axios.get(`${BASE_URL}/api/messages/${conId}`).then((res) => {
@@ -93,7 +104,7 @@ const HomeScreen = () => {
           <div className="w-full h-[405px] border overflow-scroll ">
             {chats?.map((user) => (
               <div
-                key={user.id}
+                key={user.user.id}
                 onClick={() =>
                   handleClickUserMessage(user.conversationId, user.user)
                 }

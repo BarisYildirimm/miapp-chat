@@ -1,3 +1,4 @@
+/* eslint-disable react/no-unescaped-entities */
 import { FaVideo } from "react-icons/fa";
 import { IoMdSend } from "react-icons/io";
 import Logo from "../assets/Ellipse.png";

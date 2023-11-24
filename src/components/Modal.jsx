@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 const Modal = ({ isVisible, onClose }) => {
   if (!isVisible) return null;
   return (

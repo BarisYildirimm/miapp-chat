@@ -18,8 +18,8 @@ const HomeScreen = () => {
   //   const [socket, setSocket] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [open, setIsOpen] = useState(false);
-  const [chatOpen, setChatOpen] = useState(true);
   const [chats, setChats] = useState([]);
+  const [messagesConversations, setMessagesConverstaions] = useState([]);
 
   const navigate = useNavigate();
 
@@ -32,11 +32,16 @@ const HomeScreen = () => {
       });
     }, 1000);
   }, []);
-  console.log(chats);
 
-  //   useEffect(() => {
-  //     setSocket(io(BASE_URL));
-  //   }, []);
+  const handleClickUserMessage = async (conId, user) => {
+    axios.get(`${BASE_URL}/api/messages/${conId}`).then((res) => {
+      setMessagesConverstaions({
+        message: res.data,
+        receiver: user,
+        conversationId: conId,
+      });
+    });
+  };
 
   const logoutHandler = () => {
     try {
@@ -85,16 +90,24 @@ const HomeScreen = () => {
               />
             </div>
           </form>
-          <div
-            className="w-full h-[405px] border overflow-scroll "
-            onClick={() => setChatOpen(false)}
-          >
+          <div className="w-full h-[405px] border overflow-scroll ">
             {chats?.map((user) => (
-              <User key={user.id} user={user} />
+              <div
+                key={user.id}
+                onClick={() =>
+                  handleClickUserMessage(user.conversationId, user.user)
+                }
+              >
+                <User user={user} />
+              </div>
             ))}
           </div>
         </div>
-        {chatOpen ? <Welcome userInfo={userInfo} /> : <Chat />}
+        {messagesConversations?.conversationId ? (
+          <Chat messagesConversations={messagesConversations} />
+        ) : (
+          <Welcome userInfo={userInfo} />
+        )}
       </div>
       <Modal isVisible={showModal} onClose={() => setShowModal(false)} />
     </Fragment>

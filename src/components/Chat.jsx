@@ -3,8 +3,8 @@ import { FaVideo } from "react-icons/fa";
 import { IoMdSend } from "react-icons/io";
 import Logo from "../assets/Ellipse.png";
 
-const Chat = () => {
-  
+const Chat = ({ messagesConversations }) => {
+  console.log("messagesConversations", messagesConversations);
   return (
     <>
       <div
@@ -14,7 +14,9 @@ const Chat = () => {
         <div className="bg-[#3872e9] text-white  rounded-[10px] h-20  flex justify-between items-center px-8">
           <div className="flex items-center">
             <img className="h-12" src={Logo} />
-            <p className="font-bold ml-4">Meera</p>
+            <p className="font-bold ml-4">
+              {messagesConversations?.receiver?.name}
+            </p>
           </div>
           <div>
             <FaVideo className="w-6 h-6" />
@@ -26,25 +28,17 @@ const Chat = () => {
               TODAY
             </p>
           </div>
-          <div className="w-96 rounded-[10px] border border-solid filter shadow-2xl p-5 mb-5 ">
-            Awesome! 🍨 I love chocolate chip cookie dough. Looking forward....
-          </div>
-          <div className="w-96 rounded-[10px] border border-solid filter shadow-2xl p-5 mb-5 ml-auto bg-[#3872e9] text-white ">
-            Sounds delicious, Meera! 🤩 Can't wait for Saturday! By the way, do
-            you think we should get some ice cream for dessert?"
-          </div>
-          <div className="w-96 rounded-[10px] border border-solid filter shadow-2xl p-5 mb-5 ml-auto bg-[#3872e9] text-white ">
-            Sounds delicious, Meera! 🤩 Can't wait for Saturday! By the way, do
-            you think we should get some ice cream for dessert?"
-          </div>
-          <div className="w-96 rounded-[10px] border border-solid filter shadow-2xl p-5 mb-5 ml-auto bg-[#3872e9] text-white ">
-            Sounds delicious, Meera! 🤩 Can't wait for Saturday! By the way, do
-            you think we should get some ice cream for dessert?"
-          </div>
-          <div className="w-96 rounded-[10px] border border-solid filter shadow-2xl p-5 mb-5 ml-auto bg-[#3872e9] text-white ">
-            Sounds delicious, Meera! 🤩 Can't wait for Saturday! By the way, do
-            you think we should get some ice cream for dessert?"
-          </div>
+          {messagesConversations?.message?.map((message) => (
+            <div
+              key={message}
+              className={`w-96 rounded-[10px] border border-solid filter shadow-2xl p-5 mb-5 ${
+                message?.user?.id !== messagesConversations?.receiver?.id &&
+                "ml-auto bg-[#3872e9] text-white"
+              }`}
+            >
+              {message.message}
+            </div>
+          ))}
         </div>
         <div className="flex items-center">
           <input

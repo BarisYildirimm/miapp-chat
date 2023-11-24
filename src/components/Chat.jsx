@@ -43,7 +43,7 @@ const Chat = ({ messagesConversations }) => {
         className="w-3/4 
        my-7 mx-9"
       >
-        <div className="bg-[#3872e9] text-white  rounded-[10px] h-20  flex justify-between items-center px-8">
+        <div className="bg-[#568abb] text-white  rounded-[10px] h-20  flex justify-between items-center px-8">
           <div className="flex items-center">
             <img className="h-12" src={Logo} />
             <p className="font-bold ml-4">
@@ -56,7 +56,7 @@ const Chat = ({ messagesConversations }) => {
         </div>
         <div className="max-h-[70vh] rounded-[10px] overflow-y-scroll ">
           <div className="text-center p-5 mb-4 ">
-            <p className="inline bg-[#3872e9] text-white rounded-[10px] p-2 text-lg">
+            <p className="inline bg-[#568abb] text-white rounded-[10px] p-2 text-lg">
               TODAY
             </p>
           </div>
@@ -65,7 +65,7 @@ const Chat = ({ messagesConversations }) => {
               key={i}
               className={`w-96 rounded-[10px] border border-solid filter shadow-2xl p-5 mb-5  ${
                 message?.user?.id !== messagesConversations?.receiver?.id &&
-                "ml-auto bg-[#3872e9] text-white mr-4"
+                "ml-auto bg-[#568abb] text-white mr-4"
               }`}
             >
               {message.message}

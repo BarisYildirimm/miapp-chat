@@ -11,19 +11,23 @@ import Welcome from "../components/Welcome.jsx";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 
+const BASE_URL = "http://localhost:5000";
+
 const HomeScreen = () => {
-  const [socket, setSocket] = useState(null);
+  //   const [socket, setSocket] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [open, setIsOpen] = useState(false);
-  const [login] = useState(true);
+  const [chatOpen, setChatOpen] = useState(true);
+
+  console.log("Chat open", chatOpen);
 
   const navigate = useNavigate();
 
   const userInfo = JSON.parse(localStorage.getItem("userInfo"));
 
-  useEffect(() => {
-    setSocket(io("http://localhost:5000"));
-  }, []);
+  //   useEffect(() => {
+  //     setSocket(io(BASE_URL));
+  //   }, []);
 
   const logoutHandler = () => {
     try {
@@ -72,13 +76,16 @@ const HomeScreen = () => {
               />
             </div>
           </form>
-          <div className="w-full h-[405px] border overflow-scroll">
+          <div
+            className="w-full h-[405px] border overflow-scroll "
+            onClick={() => setChatOpen(false)}
+          >
             {users.map((user) => (
               <User key={user.id} user={user} />
             ))}
           </div>
         </div>
-        {login ? <Welcome userInfo={userInfo} /> : <Chat />}
+        {chatOpen ? <Welcome userInfo={userInfo} /> : <Chat />}
       </div>
       <Modal isVisible={showModal} onClose={() => setShowModal(false)} />
     </Fragment>

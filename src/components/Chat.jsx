@@ -4,6 +4,7 @@ import { IoMdSend } from "react-icons/io";
 import Logo from "../assets/Ellipse.png";
 
 const Chat = () => {
+  
   return (
     <>
       <div

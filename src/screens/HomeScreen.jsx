@@ -7,11 +7,28 @@ import Chat from "../components/Chat.jsx";
 import { users } from "../users.js";
 import Modal from "../components/Modal.jsx";
 import Welcome from "../components/Welcome.jsx";
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 const HomeScreen = () => {
   const [showModal, setShowModal] = useState(false);
   const [open, setIsOpen] = useState(false);
   const [login] = useState(true);
+
+  const navigate = useNavigate();
+
+  const userInfo = JSON.parse(localStorage.getItem("userInfo"));
+
+  const logoutHandler = () => {
+    try {
+      localStorage.clear();
+      navigate("/");
+      toast.success("logout successful!");
+    } catch (error) {
+      toast.error("logout failed");
+      console.log(error);
+    }
+  };
   return (
     <Fragment>
       <div className="bg-[#EDEDED] w-full min-h-screen flex  text-black ">
@@ -23,13 +40,13 @@ const HomeScreen = () => {
             >
               <img className="h-12" src={Logo} alt="lupi" />
               <div className="flex flex-col ml-3">
-                <p className="font-bold">Saleha Jamshed</p>
-                <p className="font-thin ">@saleha_123</p>
+                <p className="font-bold">{userInfo.name}</p>
+                <p className="font-thin ">{userInfo.userId}</p>
               </div>
             </div>
             {open && (
               <div className="top-24 p-3 rounded-full text-4xl text-red-600 cursor-pointer">
-                <BiLogOutCircle />
+                <BiLogOutCircle onClick={logoutHandler} />
               </div>
             )}
             <div>
@@ -55,7 +72,7 @@ const HomeScreen = () => {
             ))}
           </div>
         </div>
-        {login ? <Welcome /> : <Chat />}
+        {login ? <Welcome userInfo={userInfo} /> : <Chat />}
       </div>
       <Modal isVisible={showModal} onClose={() => setShowModal(false)} />
     </Fragment>

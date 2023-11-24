@@ -19,7 +19,7 @@ const HomeScreen = () => {
   const [showModal, setShowModal] = useState(false);
   const [open, setIsOpen] = useState(false);
   const [chats, setChats] = useState([]);
-  const [users, setUsers] = useState([]);
+  const [activeUsers, setActiveUsers] = useState([]);
   const [messagesConversations, setMessagesConverstaions] = useState([]);
 
   const navigate = useNavigate();
@@ -34,9 +34,16 @@ const HomeScreen = () => {
     socket?.emit("addUser", userInfo._id);
     socket?.on("getUsers", (users) => {
       console.log("activeUsers :>> ", users);
-      setUsers(users);
+      setActiveUsers(users);
     });
-  }, [socket]);
+    socket?.on("getMessage", (data) => {
+      console.log("GetMessage ->>>>", data);
+      setMessagesConverstaions((prev) => ({
+        ...prev,
+        message: [...prev.message, { user: data.user, message: data.message }],
+      }));
+    });
+  }, [socket, userInfo._id]);
 
   useEffect(() => {
     axios.get(`${BASE_URL}/api/conversation/${userInfo._id}`).then((res) => {
@@ -109,7 +116,7 @@ const HomeScreen = () => {
                   handleClickUserMessage(user.conversationId, user.user)
                 }
               >
-                <User user={user} />
+                <User user={user} activeUsers={activeUsers} />
               </div>
             ))}
           </div>

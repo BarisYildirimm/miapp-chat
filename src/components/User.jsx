@@ -1,6 +1,8 @@
 import Logo from "../assets/Ellipse.png";
 
-const User = ({ user }) => {
+const User = ({ user, activeUsers }) => {
+  console.log("User", user);
+  console.log("Active Users", activeUsers);
   return (
     <div className=" flex justify-between items-center pt-12 pr-4 cursor-pointer ">
       <div className="flex">
@@ -13,7 +15,7 @@ const User = ({ user }) => {
       <div>
         <div
           className={`w-3 h-3 rounded-full ${
-            user.user.online ? `bg-green-500` : `bg-red-500`
+            user.user.id === activeUsers.userId ? `bg-green-500` : `bg-red-500`
           } `}
         ></div>
       </div>

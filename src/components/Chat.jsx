@@ -32,6 +32,7 @@ const Chat = ({ messagesConversations }) => {
         message,
         conversationId: messagesConversations?.conversationId,
       });
+      setMessage("");
     } catch (error) {
       console.log(error);
     }

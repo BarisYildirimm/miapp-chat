@@ -50,8 +50,8 @@ const Chat = ({ messagesConversations }) => {
   return (
     <>
       <div
-        className="w-3/4 
-       my-7 mx-9"
+        className="w-full
+       p-8"
       >
         <div className="bg-[#568abb] text-white  rounded-[10px] h-20  flex justify-between items-center px-8">
           <div className="flex items-center">

@@ -43,7 +43,7 @@ const HomeScreen = () => {
         message: [...prev.message, { user: data.user, message: data.message }],
       }));
     });
-  }, [socket, userInfo._id]);
+  }, []);
 
   useEffect(() => {
     axios.get(`${BASE_URL}/api/conversation/${userInfo._id}`).then((res) => {
@@ -73,8 +73,8 @@ const HomeScreen = () => {
   };
   return (
     <Fragment>
-      <div className="bg-[#EDEDED] w-full min-h-screen flex  text-black ">
-        <div className="w-1/4  my-7 ml-9 rounded-[10px] border border-solid  p-8 filter shadow-2xl">
+      <div className="bg-[#EDEDED] w-full min-h-screen text-black ss:block lg:flex">
+        <div className="ss:min-w-full lg:min-w-[25%]  my-7 md:ml-9  ml-9 rounded-[10px] border border-solid  p-8 filter shadow-2xl ">
           <div className="h-6 flex justify-between items-center mb-10">
             <div
               className="relative flex cursor-pointer"

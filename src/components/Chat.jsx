@@ -1,9 +1,12 @@
 /* eslint-disable react/no-unescaped-entities */
 import { useState, useEffect } from "react";
 import { io } from "socket.io-client";
+import axios from "axios";
 import { FaVideo } from "react-icons/fa";
 import { IoMdSend } from "react-icons/io";
 import Logo from "../assets/Ellipse.png";
+
+const BASE_URL = "http://localhost:5000/api";
 
 const Chat = ({ messagesConversations }) => {
   const [socket, setSocket] = useState(null);
@@ -15,10 +18,10 @@ const Chat = ({ messagesConversations }) => {
     setSocket(io("http://localhost:5000"));
   }, []);
 
-  const handleInputMessageChange = (e) => {
+  const handleInputMessageChange = async (e) => {
     setMessage(e.target.value);
   };
-  const handleClickMessage = () => {
+  const handleClickMessage = async () => {
     console.log("handleClickMessage:", {
       senderId: userInfo._id,
       receiverId: messagesConversations?.receiver?.id,
@@ -32,6 +35,13 @@ const Chat = ({ messagesConversations }) => {
         message,
         conversationId: messagesConversations?.conversationId,
       });
+      const res = await axios.post(`${BASE_URL}/messages`, {
+        senderId: userInfo._id,
+        receiverId: messagesConversations?.receiver?.id,
+        message,
+        conversationId: messagesConversations?.conversationId,
+      });
+      console.log(res.data);
       setMessage("");
     } catch (error) {
       console.log(error);

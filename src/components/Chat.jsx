@@ -99,14 +99,17 @@ const Chat = ({ messagesConversations, coords }) => {
             >
               {message.message.message}
               {message.message.location !== "" && (
-                <a
-                  href={message.message.location}
-                  target="_blank"
-                  rel="re noreferrer"
-                  className="bg-green-400 p-2 rounded-full font-bold text-black"
-                >
-                  My current location
-                </a>
+                <>
+                  <br />
+                  <a
+                    href={message.message.location}
+                    target="_blank"
+                    rel="re noreferrer"
+                    className="underline"
+                  >
+                    {message.message.location}
+                  </a>
+                </>
               )}
             </div>
           ))}

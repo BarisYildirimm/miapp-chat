@@ -3,11 +3,15 @@ import Users from "../models/userModel.js";
 
 export const message = async (req, res) => {
   try {
+    console.log("GELEN BACKEDN DAATAATATATATA :", req.body);
     const { conversationId, senderId, message } = req.body;
     const newMessage = await new Messages({
       conversationId,
       senderId,
-      message,
+      message: {
+        message: message.message,
+        location: message.location,
+      },
     });
     await newMessage.save();
     res.status(200).send("Message Send Success");

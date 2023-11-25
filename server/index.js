@@ -76,9 +76,9 @@ io.on("connection", (socket) => {
         conversationId
       );
       console.log("users Array", users);
-      const receiver = users.find((user) => user.userId === receiverId);
-      const sender = users.find((user) => user.userId === senderId);
-      const user = await Users.findById(senderId);
+      const receiver = users?.find((user) => user.userId === receiverId);
+      const sender = users?.find((user) => user.userId === senderId);
+      const user = await Users?.findById(senderId);
       console.log(
         "Gönderilecek data backend :>> ",
         senderId,
@@ -87,24 +87,28 @@ io.on("connection", (socket) => {
         conversationId
       );
       console.log("receiver :", receiver);
-      if (receiver) {
-        io.to(receiver.socketId)
-          .to(sender.socketId)
-          .emit("getMessage", {
+      try {
+        if (receiver) {
+          io.to(receiver.socketId)
+            .to(sender.socketId)
+            .emit("getMessage", {
+              senderId,
+              message,
+              conversationId,
+              receiverId,
+              user: { id: user._id, name: user.name, email: user.email },
+            });
+        } else {
+          io.to(sender.socketId).emit("getMessage", {
             senderId,
             message,
             conversationId,
             receiverId,
             user: { id: user._id, name: user.name, email: user.email },
           });
-      } else {
-        io.to(sender.socketId).emit("getMessage", {
-          senderId,
-          message,
-          conversationId,
-          receiverId,
-          user: { id: user._id, name: user.name, email: user.email },
-        });
+        }
+      } catch (error) {
+        console.log(error);
       }
     }
   );

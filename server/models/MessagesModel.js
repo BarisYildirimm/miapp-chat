@@ -9,7 +9,12 @@ const MessageSchema = mongoose.Schema(
       type: String,
     },
     message: {
-      type: String,
+      message: {
+        type: String,
+      },
+      location: {
+        type: String,
+      },
     },
   },
   { timeStamps: true }

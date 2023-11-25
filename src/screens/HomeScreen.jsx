@@ -21,10 +21,23 @@ const HomeScreen = () => {
   const [chats, setChats] = useState([]);
   const [activeUsers, setActiveUsers] = useState([]);
   const [messagesConversations, setMessagesConverstaions] = useState([]);
+  const [coords, setCoords] = useState({});
 
   const navigate = useNavigate();
 
   const userInfo = JSON.parse(localStorage.getItem("userInfo"));
+
+  useEffect(() => {
+    if (!navigator.geolocation) {
+      return toast.error("Geolocation is not supported by your browser.");
+    }
+    navigator.geolocation.getCurrentPosition((position) => {
+      setCoords({
+        latitude: position.coords.latitude,
+        longitude: position.coords.longitude,
+      });
+    });
+  }, []);
 
   useEffect(() => {
     setSocket(io("http://localhost:5000"));
@@ -38,12 +51,16 @@ const HomeScreen = () => {
     });
     socket?.on("getMessage", (data) => {
       console.log("GetMessage ->>>>", data);
+
       setMessagesConverstaions((prev) => ({
         ...prev,
-        message: [...prev.message, { user: data.user, message: data.message }],
+        message: [
+          ...prev.message,
+          { user: data.user, message: data.message.message },
+        ],
       }));
     });
-  }, []);
+  }, [socket, userInfo._id]);
 
   useEffect(() => {
     axios.get(`${BASE_URL}/api/conversation/${userInfo._id}`).then((res) => {
@@ -53,6 +70,7 @@ const HomeScreen = () => {
 
   const handleClickUserMessage = async (conId, user) => {
     axios.get(`${BASE_URL}/api/messages/${conId}`).then((res) => {
+      console.log("ne Döndü Bana", res.data);
       setMessagesConverstaions({
         message: res.data,
         receiver: user,
@@ -122,7 +140,7 @@ const HomeScreen = () => {
           </div>
         </div>
         {messagesConversations?.conversationId ? (
-          <Chat messagesConversations={messagesConversations} />
+          <Chat messagesConversations={messagesConversations} coords={coords} />
         ) : (
           <Welcome userInfo={userInfo} />
         )}

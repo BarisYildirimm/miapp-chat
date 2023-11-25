@@ -5,12 +5,18 @@ import axios from "axios";
 import { FaVideo } from "react-icons/fa";
 import { IoMdSend } from "react-icons/io";
 import Logo from "../assets/Ellipse.png";
+import { MdOutlineEmojiEmotions } from "react-icons/md";
+import { IoLocationSharp } from "react-icons/io5";
+import Picker from "emoji-picker-react";
 
 const BASE_URL = "http://localhost:5000/api";
 
-const Chat = ({ messagesConversations }) => {
+const Chat = ({ messagesConversations, coords }) => {
   const [socket, setSocket] = useState(null);
   const [message, setMessage] = useState("");
+  const [showPicker, setShowPicker] = useState(false);
+
+  console.log(messagesConversations);
 
   const userInfo = JSON.parse(localStorage.getItem("userInfo"));
 
@@ -18,27 +24,39 @@ const Chat = ({ messagesConversations }) => {
     setSocket(io("http://localhost:5000"));
   }, []);
 
-  const handleInputMessageChange = async (e) => {
-    setMessage(e.target.value);
+  const onEmojiClick = (emojiObject) => {
+    console.log("onEmojiClick", emojiObject);
+    setMessage((prevInput) => prevInput + emojiObject.emoji);
+    setShowPicker(false);
   };
-  const handleClickMessage = async () => {
+
+  const handleClickMessage = async (location) => {
     console.log("handleClickMessage:", {
       senderId: userInfo._id,
       receiverId: messagesConversations?.receiver?.id,
-      message,
+      message: {
+        message: message,
+        location: location,
+      },
       conversationId: messagesConversations?.conversationId,
     });
     try {
       socket.emit("sendMessage", {
         senderId: userInfo._id,
         receiverId: messagesConversations?.receiver?.id,
-        message,
+        message: {
+          message: message,
+          location: location,
+        },
         conversationId: messagesConversations?.conversationId,
       });
       const res = await axios.post(`${BASE_URL}/messages`, {
         senderId: userInfo._id,
         receiverId: messagesConversations?.receiver?.id,
-        message,
+        message: {
+          message: message,
+          location: location,
+        },
         conversationId: messagesConversations?.conversationId,
       });
       console.log(res.data);
@@ -47,6 +65,7 @@ const Chat = ({ messagesConversations }) => {
       console.log(error);
     }
   };
+
   return (
     <>
       <div
@@ -61,7 +80,7 @@ const Chat = ({ messagesConversations }) => {
             </p>
           </div>
           <div>
-            <FaVideo className="w-6 h-6" />
+            <FaVideo className="w-6 h-6 cursor-pointer" />
           </div>
         </div>
         <div className="max-h-[70vh] rounded-[10px] overflow-y-scroll ">
@@ -78,22 +97,47 @@ const Chat = ({ messagesConversations }) => {
                 "ml-auto bg-[#568abb] text-white mr-4"
               }`}
             >
-              {message.message}
+              {message.message.message}
+              {message.message.location !== "" && (
+                <a
+                  href={message.message.location}
+                  target="_blank"
+                  rel="re noreferrer"
+                  className="bg-green-400 p-2 rounded-full font-bold text-black"
+                >
+                  My current location
+                </a>
+              )}
             </div>
           ))}
         </div>
-        <div className="flex items-center">
+        <div className="relative">
           <input
             type="text"
             placeholder="Type a message"
-            className="relative w-full p-5 mt-4 rounded-2xl bg-white filter drop-shadow-2xl outline-none"
+            className="relative w-full pl-12 py-4 mt-4 rounded-2xl bg-white filter drop-shadow-2xl outline-none"
             value={message}
-            onChange={handleInputMessageChange}
+            onChange={(e) => setMessage(e.target.value)}
           />
           <IoMdSend
-            onClick={handleClickMessage}
-            className="absolute right-10 mt-4 text-3xl text-[#3872e9] w-12 cursor-pointer"
+            onClick={() => handleClickMessage("")}
+            className="absolute right-0 top-7 text-3xl text-[#3872e9] w-12 cursor-pointer"
           />
+          <IoLocationSharp
+            className="absolute right-12 top-7 text-3xl text-[#3872e9] w-12 cursor-pointer"
+            onClick={() =>
+              handleClickMessage(
+                `https://google.com/maps?q=${coords.latitude},${coords.longitude}`
+              )
+            }
+          />
+          <MdOutlineEmojiEmotions
+            className="absolute top-7 text-3xl text-[#3872e9] w-12 cursor-pointer"
+            onClick={() => setShowPicker((val) => !val)}
+          />
+          <div className="absolute -top-[435px]">
+            {showPicker && <Picker onEmojiClick={onEmojiClick} />}
+          </div>
         </div>
       </div>
     </>

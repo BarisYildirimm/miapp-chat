@@ -6,7 +6,7 @@ import colors from "colors";
 import cors from "cors";
 import mongoDbConnection from "./config/db.js";
 import dotenv from "dotenv";
-import url, { fileURLToPath } from "url";
+import { fileURLToPath } from "url";
 import cookieParser from "cookie-parser";
 
 import userRoutes from "./routes/userRoutes.js";
@@ -23,10 +23,8 @@ mongoDbConnection();
 const app = express();
 
 app.use(cors());
-
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-
 app.use(cookieParser());
 
 app.use("/api/users", userRoutes);
@@ -53,86 +51,63 @@ app.get("/", (req, res) => {
 });
 
 let users = [];
+
+// Kullanıcı bağlandığında
 io.on("connection", (socket) => {
-  // console.log("Connection is ready");
-  console.log("User connected", socket.id.bgBlue);
+  console.log(`User connected: ${socket.id}`.bgBlue);
+
   socket.on("addUser", (userId) => {
     const isUserExist = users.find((user) => user.userId === userId);
     if (!isUserExist) {
       const user = { userId, socketId: socket.id };
       users.push(user);
+      console.log("Online Users:", users);
       io.emit("getUsers", users);
     }
   });
 
-  socket.on(
-    "sendMessage",
-    async ({ senderId, receiverId, message, conversationId }) => {
-      console.log(
-        "sendMessage Gelen Data Backend->",
-        senderId,
-        receiverId,
-        message,
-        conversationId
-      );
-      console.log("users Array", users);
-      const receiver = users?.find((user) => user.userId === receiverId);
-      const sender = users?.find((user) => user.userId === senderId);
-      const user = await Users?.findById(senderId);
-      console.log(
-        "Gönderilecek data backend :>> ",
-        senderId,
-        receiverId,
-        message,
-        conversationId
-      );
-      console.log("receiver :", receiver);
-      try {
-        if (receiver) {
-          io.to(receiver.socketId)
-            .to(sender.socketId)
-            .emit("getMessage", {
-              senderId,
-              message,
-              conversationId,
-              receiverId,
-              user: { id: user._id, name: user.name, email: user.email },
-            });
-        } else {
-          io.to(sender.socketId).emit("getMessage", {
-            senderId,
-            message,
-            conversationId,
-            receiverId,
-            user: { id: user._id, name: user.name, email: user.email },
-          });
-        }
-      } catch (error) {
-        console.log(error);
+  socket.on("sendMessage", async ({ senderId, receiverId, message, conversationId }) => {
+    console.log("Mesaj geldi ->", senderId, receiverId, message, conversationId);
+    const receiver = users.find((user) => user.userId === receiverId);
+    const sender = users.find((user) => user.userId === senderId);
+    const user = await Users.findById(senderId);
+
+    const messageData = {
+      senderId,
+      message,
+      conversationId,
+      receiverId,
+      user: { id: user._id, name: user.name, email: user.email },
+    };
+
+    try {
+      if (receiver) {
+        io.to(receiver.socketId).emit("getMessage", messageData);
       }
+      io.to(sender.socketId).emit("getMessage", messageData);
+    } catch (error) {
+      console.error("Mesaj iletme hatası:", error);
     }
-  );
-
-  //Broadcast : Socket.IO makes it easy to send events to all the connected clients.
-  // socket.on("send-message", (data) => {
-  //   socket.broadcast.emit("message-from-server", data);
-  // });
-
-  socket.on("typing-started", () => {
-    socket.broadcast.emit("typing-started-from-server");
   });
 
-  socket.on("typing-stoped", () => {
-    socket.broadcast.emit("typing-stoped-from-server");
+  socket.on("typing-started", ({ senderId, receiverId }) => {
+    const receiver = users.find((user) => user.userId === receiverId);
+    if (receiver) {
+      io.to(receiver.socketId).emit("typing-started-from-server", senderId);
+    }
   });
 
-  socket.on("disconnect", (socket) => {
-    console.log("User Left");
+  socket.on("typing-stopped", ({ senderId, receiverId }) => {
+    const receiver = users.find((user) => user.userId === receiverId);
+    if (receiver) {
+      io.to(receiver.socketId).emit("typing-stopped-from-server", senderId);
+    }
+  });
+
+  socket.on("disconnect", () => {
+    console.log("User disconnected:", socket.id);
     users = users.filter((user) => user.socketId !== socket.id);
     io.emit("getUsers", users);
-    // socket.on("send-message", (data) => {
-    //   socket.emit("message-from-server", data);
-    // });
   });
 });
 
